@@ -1,29 +1,37 @@
-name: MLOps CI
+name: Sync to Hugging Face Hub
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+push:
+branches: [main]
+workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+sync-to-hub:
+runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+```
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
+  - name: Add Hugging Face remote
+    env:
+      HF: ${{ secrets.HG }}
+    run: |
+      git remote add space https://kaushal1508:$HF@huggingface.co/spaces/kaushal1508/huggingdemo
 
-      - name: Install dependencies
-        run: make install
+  - name: Push to Hugging Face Hub
+    env:
+      HF: ${{ secrets.HG }}
+    run: |
+      git push --force https://kaushal1508:$HF@huggingface.co/spaces/kaushal1508/huggingdemo main
+```
 
-      - name: Lint code
-        run: make lint
-
-      - name: Run tests
-        run: make test
+      
+      
+      
+      
+      
 
